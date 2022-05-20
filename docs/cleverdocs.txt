@@ -1,0 +1,10 @@
+
+
+
+#setgeometry#
+Reads in x, y and z arrays of PMT positions and finds the radius of the PMT 
+structure. Sets the search volume to 50 cm in from the PMT radius.
+
+ 
+
+
