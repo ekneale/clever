@@ -1,5 +1,0 @@
-if(EXISTS "/home/elisabethkneale/clever/build/cleverTests[1]_tests.cmake")
-  include("/home/elisabethkneale/clever/build/cleverTests[1]_tests.cmake")
-else()
-  add_test(cleverTests_NOT_BUILT cleverTests_NOT_BUILT)
-endif()

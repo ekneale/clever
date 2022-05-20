@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/cleverTests.dir/libclever/libgeometry.test.cpp.o CMakeFiles/cleverTests.dir/libclever/libhitselect.test.cpp.o CMakeFiles/libgeometry.dir/libclever/libhitselect.cpp.o CMakeFiles/libgeometry.dir/libclever/libgeometry.cpp.o  -o cleverTests  lib/libgtest.a lib/libgtest_main.a liblibgeometry.a lib/libgtest.a -lpthread 

@@ -1,5 +1,0 @@
-add_test( GeometryTest.TestSetGeometry /home/elisabethkneale/clever/build/cleverTests [==[--gtest_filter=GeometryTest.TestSetGeometry]==] --gtest_also_run_disabled_tests)
-set_tests_properties( GeometryTest.TestSetGeometry PROPERTIES WORKING_DIRECTORY /home/elisabethkneale/clever/build)
-add_test( HitSelectTest.TestSelectHits /home/elisabethkneale/clever/build/cleverTests [==[--gtest_filter=HitSelectTest.TestSelectHits]==] --gtest_also_run_disabled_tests)
-set_tests_properties( HitSelectTest.TestSelectHits PROPERTIES WORKING_DIRECTORY /home/elisabethkneale/clever/build)
-set( cleverTests_TESTS GeometryTest.TestSetGeometry HitSelectTest.TestSelectHits)

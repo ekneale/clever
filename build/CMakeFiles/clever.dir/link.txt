@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/clever.dir/clever/clever.cpp.o CMakeFiles/libgeometry.dir/libclever/libhitselect.cpp.o CMakeFiles/libgeometry.dir/libclever/libgeometry.cpp.o  -o clever  liblibgeometry.a 
