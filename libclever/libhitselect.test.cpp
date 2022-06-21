@@ -11,7 +11,7 @@
 
 //namespace{
 
-TEST(DISABLED_HitSelectTest,TestDeltaDistance2){
+TEST(HitSelectTest,TestDeltaDistance2){
 	
 	libHitSelect distance2;
 	int nhits = 10;
@@ -44,7 +44,7 @@ TEST(HitSelectTest,TestCheckCoincidence){
 }
 
 
-TEST(DISABLED_HitSelectTest,TestRemoveIsolatedHits){
+TEST(HitSelectTest,TestRemoveIsolatedHits){
 	
 	libHitSelect remove;
 	int nhits = 10;
@@ -55,7 +55,8 @@ TEST(DISABLED_HitSelectTest,TestRemoveIsolatedHits){
 	float pmtz[10] = {1,1,1,1,1,1,1,1,1,1};
 
 	int nsel = remove.RemoveIsolatedHits(nhits,times,charges,pmtx,pmty,pmtz);
-	EXPECT_EQ(nsel,10);
+	int nsel_check = 10;
+	EXPECT_EQ(nsel,nsel_check);
 
 }
 

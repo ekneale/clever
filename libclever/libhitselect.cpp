@@ -5,6 +5,7 @@
 #include <libconstants.hpp>
 #include <libhitselect.hpp>
 #include <libgeometry.hpp>
+#include <cmath>
 
 /* Performs the hit selection
  * Selects causally related hits such that
@@ -124,7 +125,7 @@ int libHitSelect::RemoveIsolatedHits(int nhits_all, float *times_all, float *cha
 int libHitSelect::CheckCoincidence(int i, int j, float *times_all, float *pmtx, float *pmty, float *pmtz){
 	// Check whether or not two hits are isolated from each other
 	// return (1) if PMT pair are not isolated from each other
-	float tdiff = abs(times[i]-times[j]);
+	float tdiff = fabs(times_all[i]-times_all[j]);
 	return( (tdiff<libConstants::tlim) && (DeltaDistance2(i,j, pmtx, pmty, pmtz)<libConstants::dlim*libConstants::dlim) );
 
 }

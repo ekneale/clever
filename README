@@ -3,3 +3,6 @@
 $ cmake -B build
 
 $ cmake --build build
+
+// To clean first
+$ cmake --build build --target clean
