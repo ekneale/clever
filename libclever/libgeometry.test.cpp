@@ -15,7 +15,7 @@ TEST(GeometryTest,TestSetGeometry){
 	float pmtx[6] = {0,100,200,300,400,500};
 	float pmty[6] = {0,100,200,300,400,500};
 	float pmtz[6] = {0,100,200,300,400,500};
-	float numPMTs = 6;
+	int numPMTs = 6;
 
 	float r = sqrt(pow(500,2)+pow(500,2));
 	float z = 500;
@@ -27,11 +27,11 @@ TEST(GeometryTest,TestSetGeometry){
 	geo.SetGeometry(numPMTs,pmtx,pmty,pmtz);
 	float search_r = geo.search_radius();
 	float search_z = geo.search_height();
-	float maxtim = geo.max_traverse_time();
+	float maxtime = geo.max_traverse_time();
 
 	EXPECT_EQ(search_r,r);
 	EXPECT_EQ(search_z,z);
-	EXPECT_EQ(maxtim,t);
+	EXPECT_EQ(maxtime,t);
 
 }
 

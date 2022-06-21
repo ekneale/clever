@@ -13,17 +13,19 @@
 
 class libGeometry
 {
-    int numPMTs;
-    float* pmtx;
-    float* pmty;
-    float* pmtz;
+
 
 	public:
 
 		libGeometry();
 
-		void SetGeometry(int nPMTs, float* x, float* y, float* z);
+		void SetGeometry(int numPMTs, float* pmtx, float* pmty, float* pmtz);
 	
+		int numPMTs;
+		float* pmtx;
+		float* pmty;
+		float* pmtz;
+
 		float rmax;
 		float zmax;
 		float tmax;
@@ -44,15 +46,13 @@ class libGeometry
 
 		inline float max_traverse_time(void){
 			return(tmax);
-		}
+                    		}
 	    //TODO
 		//define the maximum distance to neighbouring pmt
 		//define the maximum time to neighbouring pmt
 	
 	private: 
 
-//		float r;
-//		float z;
 
 };
 

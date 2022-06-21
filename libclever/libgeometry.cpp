@@ -41,7 +41,6 @@ void libGeometry::SetGeometry(int num_PMTs, float* pmt_x, float* pmt_y, float* p
 	// from the maximum PMT positions
 	float r2 = 0;
 	float z = 0;
-
 	for (int pmt = 0; pmt< numPMTs; pmt++){
 		float r2_tmp = pmtx[pmt]*pmtx[pmt]+pmty[pmt]*pmty[pmt];
 		float z_tmp =fabs(pmtz[pmt]);
