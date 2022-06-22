@@ -7,7 +7,7 @@
 #include <libconstants.hpp>
 #include <gtest/gtest.h>
 #include <math.h>
-#include <libgeometry.hpp>
+#include <vector>
 
 //namespace{
 
@@ -15,11 +15,11 @@ TEST(HitSelectTest,TestDeltaDistance2){
 	
 	libHitSelect distance2;
 	int nhits = 10;
-	float times[10] = {1,1,1,1,1,1,1,1,1,1};
-	float charges[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtx[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmty[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtz[10] = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
 	float distance = distance2.DeltaDistance2(2,3,pmtx,pmty,pmtz);
 	float d = 0;
 	EXPECT_EQ(distance,d);
@@ -31,11 +31,11 @@ TEST(HitSelectTest,TestCheckCoincidence){
 	
 	libHitSelect checkcoincidence;
 	int nhits = 10;
-	float times[10] = {1,1,1,1,1,1,1,1,1,1};
-	float charges[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtx[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmty[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtz[10] = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
 
 	int check  = checkcoincidence.CheckCoincidence(2,3,times,pmtx,pmty,pmtz);
 	int checkpoint = 1;
@@ -48,11 +48,11 @@ TEST(HitSelectTest,TestRemoveIsolatedHits){
 	
 	libHitSelect remove;
 	int nhits = 10;
-	float times[10] = {1,1,1,1,1,1,1,1,1,1};
-	float charges[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtx[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmty[10] = {1,1,1,1,1,1,1,1,1,1};
-	float pmtz[10] = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
 
 	int nsel = remove.RemoveIsolatedHits(nhits,times,charges,pmtx,pmty,pmtz);
 	int nsel_check = 10;
@@ -60,5 +60,20 @@ TEST(HitSelectTest,TestRemoveIsolatedHits){
 
 }
 
+TEST(HitSelectTest,TestSelectHits){
+	
+	libHitSelect select;
+	int nhits = 10;
+	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
+
+	int nsel_final = select.SelectHits(nhits,times,charges,pmtx,pmty,pmtz);
+	int nsel_final_check = 10;
+	EXPECT_EQ(nsel_final,nsel_final_check);
+
+}
 
 //}

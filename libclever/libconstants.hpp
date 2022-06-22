@@ -29,9 +29,8 @@ class libConstants{
 	// This is where the optimisable variables are defined.
 	// These might depend on your detector size, medium, etc.
 
-	static inline float const ns_to_cm = 21.8; // Group speed of light in medium
-	static inline int const minhits = 4; // Minimum number of hits for reconstruction to proceed
-	static inline int const maxhits = 1000; // Maximum number of hits for reconstruction to proceed
+	static inline float const cm_per_ns = 21.8; // Group speed of light in medium
+	static inline int const min_selected_hits = 4; // minimum number of hits required for reconstruction
 	static inline float const openangle = 90; // Search open angle	
 
 };

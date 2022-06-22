@@ -30,13 +30,10 @@ libGeometry::libGeometry()
 //    }
 
 //libGeometry member function
-void libGeometry::SetGeometry(int num_PMTs, float* pmt_x, float* pmt_y, float* pmt_z)
+void libGeometry::SetGeometry(int num_PMTs, vector<float> pmtx, vector<float> pmty, vector<float> pmtz)
 {
 
 	numPMTs = num_PMTs;
-	pmtx = pmt_x;
-	pmty = pmt_y;
-	pmtz = pmt_z;
 	// Set the maximum search radius and height
 	// from the maximum PMT positions
 	float r2 = 0;
@@ -48,12 +45,16 @@ void libGeometry::SetGeometry(int num_PMTs, float* pmt_x, float* pmt_y, float* p
         if (z<z_tmp) z=z_tmp;
 	}
     
-	std::vector<float> dimensions;
+	float r = sqrt(r2);
+	float dimension = 2*(r+z);//TODO why this value???
+	deltaDmax = libConstants::dlim*dimension; // distance limit for removing isolated hits
+	deltaTmax = libConstants::tlim*dimension/libConstants::cm_per_ns; //time limit for removing isolated hits
+	tmax = 2*sqrt(r2+z*z)/libConstants::cm_per_ns;// maximum detector traversal time (across diagonal)
+
 	// set maximum to 50 cm in from the PMT structure
 	float dPMT = libConstants::dPMT;
-	rmax = sqrt(r2) - dPMT;
-	zmax = z - dPMT;
-	tmax = 2*sqrt(r2+z*z)/libConstants::ns_to_cm;// maximum detector traversal time (across diagonal)
+	rmax = r - dPMT;
+	zmax = z - dPMT; 
 
 }
  
