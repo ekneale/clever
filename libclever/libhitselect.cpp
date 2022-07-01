@@ -67,11 +67,11 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 	}
 
 	// make table of causally related hits (hitsel.cc:28 hitsel:make_causal_table)
-//	if (GetCausallyRelatedHits(nhits_isolated_removed,hitinfo) < 0)
-//	{
+	if (GetCausallyRelatedHits(nhits_isolated_removed,hitinfo) < 0)
+	{
 		//TODO logging	
-//		return(-1);
-//	}
+		return(-1);
+	}
 	
 	// find clusters (hitsel.cc:422 hitsel::clus_sel)
 	// finds clusters and makes a list of all PMTs with high and medium occurrence
@@ -89,7 +89,7 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 }
 
 
-int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo> hitinfo)
+int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo)
 {
 
 	// reject temporally and spatially isolated hits; make new list of unisolated hits
@@ -158,7 +158,7 @@ float HitSelect::DeltaDistance2(int i, int j, vector<HitInfo> hitinfo)
 
 }
 
-int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo> hitinfo)
+int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>& hitinfo)
 {
 
 	// reject hits which could not have come from the same origin of light
@@ -187,7 +187,6 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 				}
 			}
 		}
-		cout << hitinfo[i].nrelated << endl;
 	}
 
 	// Reset is_related and reduce the nrelated tally if the number of 
@@ -248,11 +247,11 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 		{
 			return h1.charge > h2.charge;
 		}
-		// otherwise sort by number of related pmts
 		else
 		{
 			return h1.nrelated > h2.nrelated;
 		}
+		// otherwise sort by number of related pmts
 	};
 
 	sort(hitinfo.begin(), hitinfo.end(), sortRule);
@@ -273,6 +272,7 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 	//take all pmts with high occurrence and
 	//all pmts with minimum occurence if charges are reasonable
 	
+	//return(hitinfo);
 	return(nhits_causally_related);
 
 }

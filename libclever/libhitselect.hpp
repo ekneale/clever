@@ -33,10 +33,10 @@ class HitSelect
 		int SelectHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector<float> pmtz);
 		// Public for testing purposes - TODO move these to private when done
 //		int RemoveIsolatedHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector<float> pmtz);	
-		int RemoveIsolatedHits(int nhits_all, vector<HitInfo> hitinfo);	
+		int RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo);	
 		int CheckCoincidence(int i, int j, vector<HitInfo> hitinfo);
 		float DeltaDistance2(int i, int j, vector<HitInfo> hitinfo);
-		int GetCausallyRelatedHits(int nhits_isolated_removed, vector<HitInfo> hitinfo);	
+		int GetCausallyRelatedHits(int nhits_isolated_removed, vector<HitInfo>& hitinfo);	
 		int CheckCausal(int i, int j, vector<HitInfo> hitinfo);	
 
 		// Post-selection hit pmts, times and charges, number of hits 

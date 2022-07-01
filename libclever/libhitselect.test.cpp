@@ -106,21 +106,29 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 	
 	HitSelect causal;
 	int nhits = 10;
-	vector<int>  is_rel(nhits);
-	vector<float> times = {1,1,1,2,1,1,1,1,1,1};
-	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> pmt_y = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> pmt_z = {1,1,1,1,1,1,1,1,1,1};
+	vector<int> is_rel(nhits);
+	vector<int> nrelated 	= 	{1,5,6,0,7,8,9,8,3,3};
+	vector<float> times 	= 	{1,1,1,2,1,1,1,1,1,1};
+	vector<float> charges 	= 	{1,2,5,4,1,9,3,8,6,7};
+	vector<float> pmt_x 	= 	{1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmt_y 	= 	{1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmt_z 	= 	{1,1,1,1,1,1,1,1,1,1};
 	vector<HitInfo> hitinfo;
 	for (int i = 0; i<nhits; i++)
 	{
-		hitinfo.push_back(HitInfo(0,0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
+		hitinfo.push_back(HitInfo(nrelated[i],0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
 	}
 
 	int nsel = causal.GetCausallyRelatedHits(nhits,hitinfo);
 	int nsel_check = 9;
+	vector<float> charge_ordered;
+	for (int i = 0; i<nsel; i++)
+	{
+		charge_ordered.push_back(hitinfo[i].charge);
+	}
+	vector<float> charge_check = {3,9,8,1,5,2,7,6,1};
 	EXPECT_EQ(nsel,nsel_check);
+	EXPECT_EQ(charge_ordered,charge_check);
 }
 
 TEST(HitSelectTest,TestSelectHits){
@@ -128,7 +136,7 @@ TEST(HitSelectTest,TestSelectHits){
 	HitSelect select;
 	int nhits = 10;
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges = {1,2,5,4,1,9,3,8,6,7};
 	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
