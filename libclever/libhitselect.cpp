@@ -53,7 +53,7 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 	// collate all hit information using the HitInfo class
 	// hitinfo vector intitialised in libhitselect.hpp
 	// (set nrelated and is_selected to 0 for now)
-	vector<int> is_rel(nhits_all);//should be set to zero
+	vector<int> is_rel(nhits_all);// set to zeros
 	for (int i=0;i<nhits_all;i++)
 	{
 		hitinfo.push_back(HitInfo(0,0,is_rel,times_all[i],charges_all[i],pmtx[i],pmty[i],pmtz[i]));
@@ -164,18 +164,14 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 	// reject hits which could not have come from the same origin of light
 	// and make new list of related hits
 	// (hitsel.cc:28 hitsel::make_causal_table)
-//	for (int i=0;i<size(hitinfo);i++)
-//	{
-//		hitinfo[i].unset_related(size(hitinfo));
-//	}
 	for (int i = 0; i < nhits_isolated_removed; i++)
 	{
 		// iterate over all other hits and check how many other
 		// hits are causally related.
 		for (int j = 0; j < nhits_isolated_removed ; j++)
 		{
-//			if (hitinfo[i].is_related[j] != 1 && i != j)
-			if ( i != j)
+
+			if ( hitinfo[i].is_related[j] != 1 && i != j)
 			{
 				//will not look at i==j, only look at pairs of hits once
 				// could the pair have come from the same event origin?
@@ -183,15 +179,15 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 				{	
 					// mark the hit as selected
 					// TODO figure out how to set is_related
-	//				hitinfo[i].set_related(j); //pair i,j is related
-//					hitinfo[j].is_related[i] = 1; //pair j,i is related TODO need this later?
+					hitinfo[i].is_related[j]; //pair i,j is related
+					hitinfo[j].is_related[i] = 1; //pair j,i is related TODO need this later?
 					//increment number of related hits by 1
 					hitinfo[i].nrelated++;
+					hitinfo[j].nrelated++;
 				}
 			}
 		}
-//		cout << hitinfo[i].nrelated << endl;
-//		hitinfo[i].nrelated = nrelations;
+		cout << hitinfo[i].nrelated << endl;
 	}
 
 	// Reset is_related and reduce the nrelated tally if the number of 
@@ -200,33 +196,33 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 	// PRIOR to the removal of hits with too few related hits, which means
 	// that some others could also be taken below the threshold. 
 	// Is this correct??????????????? (Ask Michael?)
-	//for (int i = 0; i< nhits_isolated_removed; i++)
-	//{
+	for (int i = 0; i< nhits_isolated_removed; i++)
+	{
 
-	//	if (hitinfo[i].nrelated<minhits && hitinfo[i].nrelated>0)
-	//	{
+		if (hitinfo[i].nrelated<minhits && hitinfo[i].nrelated>0)
+		{
 			// not enough related hits
 			// remove from associated previous and subsequent hit counts
 			// and set is_related to 0
-	//		for (int j = 0; j<nhits_isolated_removed; j++)
-	//		{//TODO reduce the range to run from i+1?
-	//			if (hitinfo[i].is_related[j])
-	//			{
-	//				hitinfo[i].is_related[j] = 0;// pair i,j not related
-	//				hitinfo[j].is_related[i] = 0; //pair j,i not related TODO need this later??
-	//				hitinfo[i].nrelated--;
-	//				hitinfo[j].nrelated--;
-	//			}
-	//		}
+			for (int j = 0; j<nhits_isolated_removed; j++)
+			{//TODO reduce the range to run from i+1?
+				if (hitinfo[i].is_related[j])
+				{
+					hitinfo[i].is_related[j] = 0;// pair i,j not related
+					hitinfo[j].is_related[i] = 0; //pair j,i not related TODO need this later??
+					hitinfo[i].nrelated--;
+					hitinfo[j].nrelated--;
+				}
+			}
 
-	//	}
+		}
 
-	//}
+	}
 	
 	// Now remove the hits which are related to a small number of events
 	hitinfo.erase(remove_if(hitinfo.begin(),hitinfo.end(),[](HitInfo const& hit)
 	{
-		return hit.nrelated < 2;
+		return hit.nrelated < 3;
 	}
 	),hitinfo.end());
 
@@ -277,7 +273,6 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 	//take all pmts with high occurrence and
 	//all pmts with minimum occurence if charges are reasonable
 	
-	nhits_causally_related = nhits_isolated_removed;
 	return(nhits_causally_related);
 
 }

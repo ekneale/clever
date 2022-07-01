@@ -17,7 +17,7 @@ TEST(HitSelectTest,TestDeltaDistance2){
 	
 	HitSelect distance2;
 	int nhits = 10;
-	vector<int> is_rel(1);
+	vector<int> is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
@@ -40,7 +40,7 @@ TEST(HitSelectTest,TestCheckCoincidence){
 	HitSelect checkcoincidence;
 	int nhits = 10;
 	
-	vector<int>  is_rel(1);
+	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
@@ -62,7 +62,7 @@ TEST(HitSelectTest,TestCheckCausal){
 	HitSelect checkcausal;
 	int nhits = 10;
 	
-	vector<int>  is_rel(1);
+	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
@@ -84,7 +84,7 @@ TEST(HitSelectTest,TestRemoveIsolatedHits){
 	
 	HitSelect remove;
 	int nhits = 10;
-	vector<int>  is_rel(1);
+	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
@@ -106,8 +106,8 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 	
 	HitSelect causal;
 	int nhits = 10;
-	vector<int>  is_rel(1);
-	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<int>  is_rel(nhits);
+	vector<float> times = {1,1,1,2,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_y = {1,1,1,1,1,1,1,1,1,1};
@@ -119,7 +119,7 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 	}
 
 	int nsel = causal.GetCausallyRelatedHits(nhits,hitinfo);
-	int nsel_check = 10;
+	int nsel_check = 9;
 	EXPECT_EQ(nsel,nsel_check);
 }
 

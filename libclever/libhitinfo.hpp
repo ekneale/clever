@@ -46,13 +46,15 @@ class HitInfo
 			return is_related[i];
 		}
 
-		void unset_related(int n)
+		void unset_related(int i)
 		{ 
-			for (int i = 0; i< n; i++)
-			{
-				is_related[i] = 0;
-			}
+//			for (int i = 0; i< n; i++)
+//			{
+//				is_related[i] = 0;
+//			}
+			is_related[i] = 0;
 		}
+		
 
 	// define the private functions and variables
 	//private:
