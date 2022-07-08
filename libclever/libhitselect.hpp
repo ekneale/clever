@@ -29,15 +29,27 @@ class HitSelect
 		HitSelect();
 		~HitSelect();
 		
-		// Pubic functions
+		
+		// Main function called from outside class.
 		int SelectHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector<float> pmtz);
-		// Public for testing purposes - TODO move these to private when done
-//		int RemoveIsolatedHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector<float> pmtz);	
+	
+		// Principal functions which perform the hit selection and which are
+		// called by the main SelectHits function.
+		// (Strictly private functions but public to be available for 
+		// running unit tests.)
 		int RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo);	
+		int GetCausallyRelatedHits(int nhits_isolated_removed, vector<HitInfo>& hitinfo);	
+		int FindHitClusters(int nhits_causally_related, vector<HitInfo>& hitinfo);
+
+		// Subsidiary functions called by the the principal functions
+		// to check that two hits are related.
+		// CheckCoincidence: check that two hits are not isolated from eachother
+		// DeltaDistance2: calculate dt between hit pmts for use in CheckCausal
+		// CheckCausal: check that two hits could have the same physical origin
 		int CheckCoincidence(int i, int j, vector<HitInfo> hitinfo);
 		float DeltaDistance2(int i, int j, vector<HitInfo> hitinfo);
-		int GetCausallyRelatedHits(int nhits_isolated_removed, vector<HitInfo>& hitinfo);	
 		int CheckCausal(int i, int j, vector<HitInfo> hitinfo);	
+		int FindClusterCandidate(int nhits_causally_related, int i, int j, vector<HitInfo>& hitinfo, vector<int>& cluster);
 
 		// Post-selection hit pmts, times and charges, number of hits 
 		// for use in generating starting points
@@ -62,11 +74,6 @@ class HitSelect
 		vector <float> pmty;
 		vector <float> pmtz;
 	
-	
-
-		
-		//int FindClusteredHits(int nhits_causally_related, int *pmtIDs_causally_related,vector<float> times_causally_related, vector<float> charges_causally_related);
-
 		
 };
 

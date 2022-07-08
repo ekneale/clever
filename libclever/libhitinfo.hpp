@@ -25,7 +25,9 @@ class HitInfo
 	public:
 
 		int nrelated;
+		int nselected;
 		int is_selected;
+		int noccurrence;
 		vector <int> is_related;
 		float time;
 		float charge;
@@ -33,7 +35,7 @@ class HitInfo
 		float pmty;
 		float pmtz;
 
-		HitInfo(int nrel, int is_sel, vector<int> is_rel, float t, float q, float x, float y, float z){ nrelated = nrel, is_selected = is_sel, is_related = is_rel, time = t, charge = q, pmtx = x, pmty = y, pmtz = z;};
+		HitInfo(int nrel, int nsel, int is_sel, int noccur, vector<int> is_rel, float t, float q, float x, float y, float z){ nrelated = nrel, nselected = nsel, is_selected = is_sel, noccurrence = noccur, is_related = is_rel, time = t, charge = q, pmtx = x, pmty = y, pmtz = z;};
 		~HitInfo() {};
 
 		void set_related(int i)
