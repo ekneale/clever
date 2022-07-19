@@ -5,6 +5,8 @@ project(clever
 	DESCRIPTION "Coincident Low-Energy Vertex Reconstruction"
     LANGUAGES CXX)
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -20,11 +22,16 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_library(libgeometry 
+	${CMAKE_SOURCE_DIR}/libclever/libtestpointcalc.cpp
+	${CMAKE_SOURCE_DIR}/libclever/libfourhitcombos.cpp
 	${CMAKE_SOURCE_DIR}/libclever/libhitselect.cpp
 	${CMAKE_SOURCE_DIR}/libclever/libgeometry.cpp
 	${CMAKE_SOURCE_DIR}/libclever/libconstants.hpp
 	${CMAKE_SOURCE_DIR}/libclever/libgeometry.hpp
 	${CMAKE_SOURCE_DIR}/libclever/libhitselect.hpp
+	${CMAKE_SOURCE_DIR}/libclever/libtestpointcalc.hpp
+	${CMAKE_SOURCE_DIR}/libclever/libfourhitcombos.hpp
+	${CMAKE_SOURCE_DIR}/libclever/libhitinfo.hpp
 )
 
 target_include_directories(libgeometry PUBLIC libclever)
@@ -33,7 +40,7 @@ add_executable(clever
 	   $<TARGET_OBJECTS:libgeometry>
 	   clever/clever.cpp)
 
-target_link_libraries(clever libgeometry)
+target_link_libraries(clever libgeometry Eigen3::Eigen)
 
 # Add the unit tests #
 
@@ -42,6 +49,7 @@ add_executable(
 	$<TARGET_OBJECTS:libgeometry>
     libclever/libgeometry.test.cpp
 	libclever/libhitselect.test.cpp
+	#	libclever/libtestpointcalc.test.cpp
 )
 
 target_link_libraries(

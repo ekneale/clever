@@ -23,7 +23,7 @@ HitSelect::HitSelect()
 {
 	nhits_isolated_removed = 0;
 	nhits_causally_related = 0;
-	SelectHits(nhits_all, times_all, charges_all, pmtx, pmty, pmtz);
+	SelectHits(nhits_all, times_all, charges_all, pmtx, pmty, pmtz, hitinfo, traverseTmax, dTmax, dRmax);
 
 }
 
@@ -38,7 +38,7 @@ HitSelect::~HitSelect()
 	nhits_causally_related = 0;
 }
 
-int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector <float> pmtz)
+int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> charges_all, vector<float> pmtx, vector<float> pmty, vector <float> pmtz, vector<HitInfo>& hitinfo, float traverseTmax, float dTmax, float dRmax)
 {
 	// Do not proceed with reconstruction if nhits outside reconstructable range
 	if (nhits_all < minhits || nhits_all > maxhits) 
@@ -58,16 +58,15 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 	// reject temporally and spatially isolated hits 
 	// (hitsel.cc:313 hitsel::mrclean)
 	// makes new list of hits without isolated hits
-	if (RemoveIsolatedHits(nhits_all,hitinfo) < 0)
+	if ( RemoveIsolatedHits(nhits_all,hitinfo,nhits_isolated_removed, dTmax, dRmax) < 0)
 	{
 		//TODO logging
 		return(-1);
 	}
-
 	// make table of causally related hits 
 	// (hitsel.cc:28 hitsel:make_causal_table)
 	
-	if (GetCausallyRelatedHits(nhits_isolated_removed,hitinfo) < 0)
+	if (GetCausallyRelatedHits(nhits_isolated_removed,hitinfo,nhits_causally_related, traverseTmax) < 0)
 	{
 		//TODO logging	
 		return(-1);
@@ -85,7 +84,6 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 	//TODO what do we need to clear to avoid memory leak??????????
 	//TODO How are we going to pass the hitinfo array back? [I think this is dealt with in the unit tests]
 	nhits = size(hitinfo);
-	hitinfo.clear();
 	return(nhits);
 }
 
@@ -93,7 +91,7 @@ int HitSelect::SelectHits(int nhits_all, vector<float> times_all, vector<float> 
 //************************************************************************** //
 // These are the principal functions called by the main SelectHits function.
 
-int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo)
+int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo, int& nhits_isolated_removed, float dTmax, float dRmax)
 {
 
 	// Reject temporally and spatially isolated hits.
@@ -102,34 +100,29 @@ int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo)
 	
 	// Iterate over each hit and check to see if it is
 	// within dlimit and tlimit of another hit 
-	for (int i = 0; i < nhits_all; i++)
+	for (int i = 0; i < nhits_all-1; i++)
 	{
-		// iterate over all other hits and check not isolated
-		// if hit (i) hasn't already been marked as selected
-		// TODO check that this is definitely iterating over all 
-		for (int j = i+1; j < nhits_all && !hitinfo[i].is_selected; j++)
+		if (!hitinfo[i].is_selected)
 		{
-			// is the pair less than dlimit and tlimit apart?
-			if (i!=j)
+			// iterate over all other hits and check not isolated
+			// if hit (i) hasn't already been marked as selected
+			// TODO check that this is definitely iterating over all 
+			for (int j = i+1; j < nhits_all; j++)
 			{
-				if ( CheckCoincidence(i,j,hitinfo) )
+				// is the pair less than dlimit and tlimit apart?
+				if (i!=j)//TODO don't need this
 				{
-					// mark the hit as selected
-					hitinfo[i].is_selected = 1;
-					hitinfo[j].is_selected = 1;
-					nhits_isolated_removed += 2;
+					if ( CheckCoincidence(i,j,hitinfo,dTmax,dRmax) )
+					{
+						// mark the hit as selected
+						hitinfo[i].is_selected = 1;
+						hitinfo[j].is_selected = 1;
+					}
 				}
 			}
 		}
 	}
 	
-	// Return if the number of selected hits is less than the 
-	// minimum required for reconstruction
-	if (nhits_isolated_removed < minhits)
-	{
-		hitinfo.clear();
-		return(-1);
-	}
 
 	// Remove hit info for isolated hits by erasing
 	// elements where elements are not marked as selected
@@ -138,13 +131,22 @@ int HitSelect::RemoveIsolatedHits(int nhits_all, vector<HitInfo>& hitinfo)
 		return hit.is_selected==0;
 	}
 	),hitinfo.end());
+	
+	nhits_isolated_removed = size(hitinfo);
 
+	// Return if the number of initially selected hits is less than the 
+	// minimum required for reconstruction
+	if (nhits_isolated_removed < minhits)
+	{
+		hitinfo.clear();
+		return(-1);
+	}
 
 	return(nhits_isolated_removed);
 }
 
 
-int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>& hitinfo)
+int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>& hitinfo, int& nhits_causally_related, float traverseTmax)
 {
 
 	// reject hits which could not have come from the same origin of light
@@ -161,7 +163,7 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 			{
 				//will not look at i==j, only look at pairs of hits once
 				// could the pair have come from the same event origin?
-				if ( CheckCausal(i,j,hitinfo) )
+				if ( CheckCausal(i,j,hitinfo,traverseTmax) )
 				{
 					// mark the hit as selected
 					hitinfo[i].is_related[j] = 1; //pair i,j is related
@@ -249,6 +251,9 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 
 int HitSelect::FindHitClusters(int nhits_causally_related, vector<HitInfo>& hitinfo)
 {
+	// TODO This is very long. Need to put some into smaller subsidiary
+	// functions.
+	
 	// Loop through is_related. Where hitinfo[i].is_related[j]==1, 
 	// hits i and j are related.
 	// Use each of these hits as seeds (seed1 & seed2) to create lists of clustered hits,
@@ -406,10 +411,11 @@ int HitSelect::FindHitClusters(int nhits_causally_related, vector<HitInfo>& hiti
 			//
 			// Iterate backwards over the vectors and subtract from tally each
 			// hit for which hitinfo[i].nrelations+1<min_cluster_size.
-			if (size(cluster)>=min_cluster_size)
+			int cluster_size = count(cluster.begin(),cluster.end(),1);
+			if (cluster_size>=min_cluster_size)
 			{
 				all_clusters.push_back(cluster);
-				min_cluster_size = size(cluster); // set min_cluster_size to largest so far
+				min_cluster_size = cluster_size; // set min_cluster_size to largest so far
 			}
 			nrel_cluster.clear();
 		} // End loop over second hit seed2.
@@ -433,29 +439,31 @@ int HitSelect::FindHitClusters(int nhits_causally_related, vector<HitInfo>& hiti
 	}
 
 	// remove any clusters which are less than the biggest cluster found 
-	all_clusters.erase(remove_if(all_clusters.begin(), all_clusters.end(), [min_cluster_size](const vector <int>& clus)
+	
+	int nclusters = (int)all_clusters.size();
+	for (int i=0;i<nclusters-1;i++)
 	{
-		return count(clus.begin(),clus.end(),1)<min_cluster_size;
+		if (count(all_clusters[i].begin(),all_clusters[i].end(),1) < min_cluster_size)
+		{
+		//TODO info logging
+		//cout << "Number of hits in cluster " << count(all_clusters[i].begin(),all_clusters[i].end(),1) << ", removing." << endl;
+		all_clusters.erase(all_clusters.begin() + i);
+		}
 	}
-	), all_clusters.end());
 
 	// Get the total number of clusters with the size of the biggest cluster.
 	// This is used to define which hits have a high occurence in clusters.
-	int nclusters = (int)all_clusters.size();
+	nclusters = (int)all_clusters.size();
 	// Mark the hits that are in the final cluster of all_clusters by updating
 	// is_selected.
 	// TODO this is what is done in BONSAI but is there a better way to select
 	// the best cluster?????
 	// Would it be worth keeping all of the hits which appear in the large 
 	// clusters and then using hits where these don't overlap to create 
-	// additional starting points?????
-	for (int i=0; i<(int)all_clusters[nclusters-1].size(); i++)
+	// additional stairting points?????
+	for (int i=0; i<size(hitinfo); i++)
 	{
-		if (all_clusters[nclusters-1][i])
-		{
-			hitinfo[i].is_selected = 1;
-		}
-		else hitinfo[i].is_selected = 0;
+		hitinfo[i].is_selected = all_clusters[nclusters-1][i];
 	}
 	
 	// Select all hits with high occurrence in clusters. Remove remainder.
@@ -580,13 +588,14 @@ int HitSelect::FindHitClusters(int nhits_causally_related, vector<HitInfo>& hiti
 // These are the subsidiary functions called by the principal functions 
 // which are in turn called by the main HitSelect function.
 
-int HitSelect::CheckCoincidence(int i, int j, vector<HitInfo> hitinfo)
+int HitSelect::CheckCoincidence(int i, int j, vector<HitInfo> hitinfo, float dTmax,float dRmax)
 {
 	// Check whether or not two hits are isolated from each other
 	// return (1) if PMT pair are not isolated from each other
 	float deltaT = fabs(hitinfo[i].time-hitinfo[j].time);
 	float deltaD = DeltaDistance2(i,j,hitinfo);
-	return( (deltaT<libConstants::tlim) && (deltaD<libConstants::dlim*libConstants::dlim) );
+	
+	return( (deltaT<dTmax) && (deltaD<dRmax) );
 
 }
 
@@ -600,22 +609,19 @@ float HitSelect::DeltaDistance2(int i, int j, vector<HitInfo> hitinfo)
 
 }
 
-int HitSelect::CheckCausal(int i,int j, vector<HitInfo> hitinfo)
+int HitSelect::CheckCausal(int i,int j, vector<HitInfo> hitinfo, float traverseTmax)
 {
 	
 	float deltaT = fabs(hitinfo[i].time-hitinfo[j].time);
 	float deltaD2 = DeltaDistance2(i,j,hitinfo);
-
 	// First check that the time and distance between PMTs do not 
 	// exceed the detector constraints
 	if (deltaT > libConstants::tcoinc)
 	{
 		return (0);
 	}
-
-	//TODO reinstate the check on time difference	
-	libGeometry geo;
-	if (deltaT > geo.max_traverse_time())//*cm_to_ns*cylinder_diagonal)
+	Geometry geo;
+	if (deltaT > traverseTmax)
 	{
 		return (0);
 	}

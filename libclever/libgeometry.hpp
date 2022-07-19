@@ -12,13 +12,13 @@
 #include <vector>
 using namespace std;
 
-class libGeometry
+class Geometry
 {
 
 
 	public:
 
-		libGeometry();
+		Geometry();
 
 		void SetGeometry(int numPMTs, vector<float> pmtx, vector<float> pmty, vector<float> pmtz);
 	
@@ -30,7 +30,7 @@ class libGeometry
 		float rmax; //search radius
 		float zmax; //search height
 		float tmax; //maximum traverse time (time to cross diagonal)
-		float deltaDmax; //maximum distance to reject isolated hits
+		float deltaRmax; //maximum distance to reject isolated hits
 		float deltaTmax; //maximum time to reject isolated hits
 
 		// The following are the run-time 'constants' calculated as a function 
@@ -61,8 +61,8 @@ class libGeometry
 
 		// maximum distance between pmts
 		// for rejecting isolated hits
-		inline float max_pmt_deltaD(void){
-			return(deltaDmax);
+		inline float max_pmt_deltaR(void){
+			return(deltaRmax);
 		}
 		
 	private: 

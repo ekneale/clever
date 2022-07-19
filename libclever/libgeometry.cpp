@@ -17,7 +17,7 @@
 #include <libgeometry.hpp>
 
 //libGeometry constructor
-libGeometry::libGeometry()
+Geometry::Geometry()
 	{
 		SetGeometry(numPMTs, pmtx, pmty, pmtz);
 	}
@@ -29,8 +29,8 @@ libGeometry::libGeometry()
 //		delete zmax;
 //    }
 
-//libGeometry member function
-void libGeometry::SetGeometry(int num_PMTs, vector<float> pmtx, vector<float> pmty, vector<float> pmtz)
+//Geometry member function
+void Geometry::SetGeometry(int num_PMTs, vector<float> pmtx, vector<float> pmty, vector<float> pmtz)
 {
 
 	numPMTs = num_PMTs;
@@ -48,7 +48,7 @@ void libGeometry::SetGeometry(int num_PMTs, vector<float> pmtx, vector<float> pm
     
 	float r = sqrt(r2);
 	float dimension = 2*(r+z);//TODO why this value???
-	deltaDmax = libConstants::dlim*dimension; // distance limit for removing isolated hits
+	deltaRmax = libConstants::dlim*dimension; // distance limit for removing isolated hits
 	deltaTmax = libConstants::tlim*dimension/libConstants::cm_per_ns; //time limit for removing isolated hits
 	tmax = 2*sqrt(r2+z*z)/libConstants::cm_per_ns;// maximum detector traversal time (across diagonal)
 

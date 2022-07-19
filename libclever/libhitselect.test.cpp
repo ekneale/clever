@@ -1,5 +1,5 @@
 /**************************************************
- * Unit test for setgeometry function.
+ * Unit tests for HitSelect class
  *
  * *************************************************/
 
@@ -11,7 +11,7 @@
 #include <math.h>
 #include <vector>
 
-//namespace{
+namespace{
 
 TEST(HitSelectTest,TestDeltaDistance2){
 	
@@ -40,6 +40,9 @@ TEST(HitSelectTest,TestCheckCoincidence){
 	HitSelect checkcoincidence;
 	int nhits = 10;
 	
+	float dimension = 2*16; 
+	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
+	float dRmax = libConstants::dlim*dimension;
 	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
@@ -51,7 +54,7 @@ TEST(HitSelectTest,TestCheckCoincidence){
 	{
 		hitinfo.push_back(HitInfo(0,0,0,0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
 	}
-	int check  = checkcoincidence.CheckCoincidence(2,3,hitinfo);
+	int check  = checkcoincidence.CheckCoincidence(2,3,hitinfo,dTmax,dRmax);
 	int checkpoint = 1;
 	EXPECT_EQ(check,checkpoint);
 
@@ -61,7 +64,8 @@ TEST(HitSelectTest,TestCheckCausal){
 	
 	HitSelect checkcausal;
 	int nhits = 10;
-	
+
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
 	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
@@ -73,7 +77,7 @@ TEST(HitSelectTest,TestCheckCausal){
 	{
 		hitinfo.push_back(HitInfo(0,0,0,0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
 	}
-	int check  = checkcausal.CheckCausal(2,3,hitinfo);
+	int check  = checkcausal.CheckCausal(2,3,hitinfo,traverseTmax);
 	int checkpoint = 1;
 	EXPECT_EQ(check,checkpoint);
 
@@ -84,20 +88,24 @@ TEST(HitSelectTest,TestRemoveIsolatedHits){
 	
 	HitSelect remove;
 	int nhits = 10;
+	float dimension = 2*16; 
+	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
+	float dRmax = libConstants::dlim*dimension;
 	vector<int>  is_rel(nhits);
-	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> times = {1,1,1,1,1,1,1,0,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_x = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_y = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> pmt_z = {1,1,1,1,1,1,1,1,1,1};
 	vector<HitInfo> hitinfo;
+	int nhits_isolated_removed;
 	for (int i = 0; i<nhits; i++)
 	{
 		hitinfo.push_back(HitInfo(0,0,0,0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
 	}
 
-	int nsel = remove.RemoveIsolatedHits(nhits,hitinfo);
-	int nsel_check = 10;
+	int nsel = remove.RemoveIsolatedHits(nhits,hitinfo,nhits_isolated_removed,dTmax,dRmax);
+	int nsel_check = 9;
 	EXPECT_EQ(nsel,nsel_check);
 }
 
@@ -106,6 +114,8 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 	
 	HitSelect causal;
 	int nhits = 10;
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
+	int nhits_causally_related;
 	vector<int> is_rel(nhits);
 	vector<int> nrelated 	= 	{1,5,6,0,7,8,9,8,3,3};
 	vector<float> times 	= 	{1,1,1,2,1,1,1,1,1,1};
@@ -119,7 +129,7 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 		hitinfo.push_back(HitInfo(nrelated[i],0,0,0,is_rel,times[i],charges[i],pmt_x[i],pmt_y[i],pmt_z[i]));
 	}
 
-	int nsel = causal.GetCausallyRelatedHits(nhits,hitinfo);
+	int nsel = causal.GetCausallyRelatedHits(nhits,hitinfo,nhits_causally_related,traverseTmax);
 	int nsel_check = 9;
 	vector<float> charge_ordered;
 	vector<int> nrelated_ordered;
@@ -136,7 +146,6 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 
 TEST(HitSelectTest,FindClusterCandidate){
 
-	//TODO Need better test vectors here	
 	HitSelect clus;
 	int nhits = 10;
 	vector<int> cluster(nhits);
@@ -198,17 +207,29 @@ TEST(HitSelectTest,TestSelectHits){
 	
 	HitSelect select;
 	int nhits = 10;
+	float dimension = 2*16; 
+	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
+	float dRmax = libConstants::dlim*dimension;
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
 	vector<float> times	  = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> charges = {1,2,5,4,1,9,3,8,6,7};
-	vector<float> pmtx = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> pmty = {1,1,1,1,1,1,1,1,1,1};
-	vector<float> pmtz = {1,1,1,1,1,1,1,1,1,1};
+	vector<float> charges 	= 	{1,2,5,4,1,9,3,8,6,7};
+	vector<float> pmtx 	= 	{1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmty 	= 	{1,1,1,1,1,1,1,1,1,1};
+	vector<float> pmtz 		= 	{1,1,1,1,1,1,1,1,1,1};
+	vector<HitInfo> hitinfo;
+	vector<float> charge_ordered;
 
-	int nsel_final = select.SelectHits(nhits,times,charges,pmtx,pmty,pmtz);
-	int nsel_final_check = 10; //???? TODO can't be right????!!!!!
+	int nsel_final = select.SelectHits(nhits,times,charges,pmtx,pmty,pmtz,hitinfo, traverseTmax,dTmax, dRmax);
+	int nsel_final_check = 10; 
 	EXPECT_EQ(nsel_final,nsel_final_check);
 
+	for (int i = 0; i<nsel_final; i++)
+	{
+		charge_ordered.push_back(hitinfo[i].charge);
+	}
+	vector<float> charge_check = {9,8,7,6,5,4,3,2,1,1};
+	EXPECT_EQ(charge_ordered,charge_check);
 }
 
 
-//}
+}

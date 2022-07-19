@@ -24,6 +24,7 @@ class HitInfo
 	// for the hit selection and reconstruction process
 	public:
 
+		vector<HitInfo> hitinfo;
 		int nrelated;
 		int nselected;
 		int is_selected;

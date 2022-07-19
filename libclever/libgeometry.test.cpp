@@ -23,7 +23,7 @@ TEST(GeometryTest,TestSetGeometry){
 	r -= 50;
 	z -= 50;
 
-	libGeometry geo;
+	Geometry geo;
 	geo.SetGeometry(numPMTs,pmtx,pmty,pmtz);
 
 	float search_r = geo.search_radius();
