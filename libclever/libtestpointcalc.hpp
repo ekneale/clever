@@ -30,7 +30,6 @@ class TestPointCalc
 		
 		vector<HitInfo> hitinfo;
 		vector<vector<float>> testpoints;
-//		vector<vector<float>> testpoints_tmp;
 
 		// Main function called from outside class.
 		int CalculateTestPoints(vector<HitInfo>& hitinfo, float zmax, float rmax2, vector<vector<float>>& testpoints);
@@ -41,10 +40,11 @@ class TestPointCalc
 		// running unit tests.)
 		void FrontOfPMTTestPoints(float pmtx, float pmty, float pmtz, float rmax2, float zmax, vector<vector<float>>& testpoints);
 		void FourHitComboTestPoints(vector<HitInfo> hitinfo,vector<int> combos_upper_bounds, vector<vector<float>>& testpoints_tmp);
-
+		void ReduceTestPoints(vector<vector<float>>& fourhit_testpoints, float dmin2, vector<vector<float>>& testpoints);
 
 		// Subsidiary functions called by the the principal functions
 		void FourHitVertex(vector<HitInfo> hitinfo, vector<int> fourhitcombo, int combo, vector<vector<float>>& testpoints_tmp);
+		void FindClosePoint(vector<vector<float>> testpoints_tmp, int point1, float dmin);
 
 
 	// define the private functions and variables

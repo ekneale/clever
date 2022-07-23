@@ -18,16 +18,14 @@
 
 //libGeometry constructor
 Geometry::Geometry()
-	{
-		SetGeometry(numPMTs, pmtx, pmty, pmtz);
-	}
+{
+	SetGeometry(numPMTs, pmtx, pmty, pmtz);
+}
 
-//TODO decide what the destructor should do
-//libGeometry::~libGeometry()
-//    {
-//        delete rmax;
-//		delete zmax;
-//    }
+//Geometry::~Geometry()
+//{
+	//TODO decide what the destructor should do
+//}
 
 //Geometry member function
 void Geometry::SetGeometry(int num_PMTs, vector<float> pmtx, vector<float> pmty, vector<float> pmtz)

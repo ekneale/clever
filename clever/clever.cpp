@@ -8,6 +8,7 @@
 #include <libhitselect.hpp>
 #include <libgeometry.hpp>
 #include <libconstants.hpp>
+#include <libtestpointcalc.hpp>
 
 int main(){
 
@@ -23,6 +24,8 @@ int main(){
 	float traverseTmax = geo.max_traverse_time();
 	float dTmax = geo.max_pmt_deltaT();
 	float dRmax = geo.max_pmt_deltaR();
+	float zmax = geo.search_radius();
+	float rmax2 = geo.search_height();
 
 //	for (int hit=0;hit<nevents;hit++ TODO will need to loop over events.
 	
@@ -50,5 +53,19 @@ int main(){
 
 	// TODO info logging - cout hitinfo for the selected hits.
 
+	// Calculate the initial test vertices fr the search.
+	TestPointCalc testpointcalc;
+	vector<vector<float>> testpoints;
+	testpointcalc.CalculateTestPoints(hitinfo,  rmax2, zmax, testpoints);
+
+	// TODO perform the maximum likelihood fit starting from the final list
+	// of testpoints calculated in the previous steps.
+	// Initial search
+	// Coarse search
+	// Fine search
+	// Final search
+
+	// Get the vertex and additional variables.
+	
 	return 0;
 }

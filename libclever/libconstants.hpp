@@ -46,10 +46,32 @@ namespace libConstants{
 	const int max_nselected = 477; // max. number of selected hits to calculate
 	// 	ncombinations (defaults to max_ncombinations if nsel>max_nselected)
 	const int max_ncombinations = 2147483647; // maximum number of 4-hit combos
-
+   	
+	// Testpoints closer than dmin are averaged in 2 steps to reduce number 
+	// of initial points.
+	const float dmin_initial = 1600.; // dmin_initial = 40.
+	const float dmin2 = 900.; // dmin = 30.
 
 	/************************************************************************/
-	// Constants for VertexSearch.
+	// Constants for Maximisation.
+	// Set the minimum radial distances for successive searches.
+	const float initial_rmin 	= 100;
+	const float coarse_rmin 	= 100;
+	const float fine_rmin 		= 50;
+	//Set the maximum radial distances for successive searches.
+	const float coarse_rmax 	= 50;
+	const float fine_rmax 		= 30;
+	// Set the likelihood skim fraction for successive searches.
+	// TODO These control how much is removed...
+	const float coarse_skim_fraction 	= 0.04;
+	const float fine_skim_fraction 		= 0.06;
+	const float final_skim_fraction 	= 0.08;
+	// Set the likelihood skim difference for successive searches.
+	// TODO These control how much is removed...
+	const float coarse_dlike	= 0.4;
+	const float fine_dlike		= 0.5;
+	const float final_dlike 	= 0.01;
+
 	const float openangle = 90; // Search open angle
 }
 #endif
