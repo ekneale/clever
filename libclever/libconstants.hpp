@@ -13,11 +13,15 @@
 
 namespace libConstants{
 
+	// This is where the runtime settings are defined.
+	const int useCharge = 0; // Whether or not to use charge as well as timing
+	const int useAngle = 1; // Whether or not to use angular constraint on likelihood
+
 	// This is where the basic constants are defined.
 	// These shouldn't need changing.
 	
 	const float dPMT = 50; // Search volume 50 cm in from PMT radius
-	const int ncheck = 13; // Number of checks to do (TODO number of 
+	const int ncheck = 13; // Number of checks to do (TODO)
 	const float cm_per_ns = 21.8;
 
 
@@ -27,7 +31,7 @@ namespace libConstants{
 	const float dlim = 0.1785; // PMT pair maximal distance fraction TODO do this in a different way
 	const float tlim = 0.1079;// PMT pair maximal time difference fraction TODO do this in a different way
 	const float tres = 1.0; // PMT time resolution in ns
-	const float tcoinc = 1.0; // Maximum time difference between PMT hits
+	const float tcoinc = 1.0; // Maximum time difference between PMT hits in ns
 	const int min_selected_hits = 4; // minimum number of hits required for reconstruction
 
 
@@ -48,19 +52,19 @@ namespace libConstants{
 	const int max_ncombinations = 2147483647; // maximum number of 4-hit combos
    	
 	// Testpoints closer than dmin are averaged in 2 steps to reduce number 
-	// of initial points.
-	const float dmin_initial = 1600.; // dmin_initial = 40.
-	const float dmin2 = 900.; // dmin = 30.
+	// of initial points. TODO do this another way e.g. with a histo???
+	const float dmin2_initial = 1600.; // dmin_initial = 40 cm.
+	const float dmin2 = 900.; // dmin = 30 cm.
 
 	/************************************************************************/
 	// Constants for Maximisation.
 	// Set the minimum radial distances for successive searches.
-	const float initial_rmin 	= 100;
-	const float coarse_rmin 	= 100;
-	const float fine_rmin 		= 50;
+	const float initial_rmin 	= 100; // cm
+	const float coarse_rmin 	= 100; // cm
+	const float fine_rmin 		= 50;  // cm
 	//Set the maximum radial distances for successive searches.
-	const float coarse_rmax 	= 50;
-	const float fine_rmax 		= 30;
+	const float coarse_rmax 	= 50; // cm
+	const float fine_rmax 		= 30; // cm
 	// Set the likelihood skim fraction for successive searches.
 	// TODO These control how much is removed...
 	const float coarse_skim_fraction 	= 0.04;
@@ -71,7 +75,8 @@ namespace libConstants{
 	const float coarse_dlike	= 0.4;
 	const float fine_dlike		= 0.5;
 	const float final_dlike 	= 0.01;
-
+	// Set the bin width for the time-of-flight subtracted timing distribution.
+	const float binwidthTTof = 6.; // ns
 	const float openangle = 90; // Search open angle
 }
 #endif
