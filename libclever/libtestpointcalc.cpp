@@ -22,7 +22,7 @@ using namespace Eigen;
 //constructor function
 TestPointCalc::TestPointCalc()
 {
-	CalculateTestPoints(hitinfo, rmax, zmax, testpoints);
+	CalculateTestPoints(hitinfo, rmax, zmax, testPointsVector);
 }
 
 //destructor function
@@ -32,7 +32,7 @@ TestPointCalc::~TestPointCalc()
 }
 
 
-int TestPointCalc::CalculateTestPoints(vector<HitInfo>& hitinfo, float rmax2, float zmax, vector<vector<float>>& testpoints)
+int TestPointCalc::CalculateTestPoints(vector<HitInfo>& hitinfo, float rmax2, float zmax, vector<vector<float>>& testPointsVector)
 {
 
 	// Calculates vertices from four-hit combinations.
@@ -53,21 +53,21 @@ int TestPointCalc::CalculateTestPoints(vector<HitInfo>& hitinfo, float rmax2, fl
 	// the testpoints vector (without averaging over nearby hits).
 	for (int hit=0; hit<ncombos-3; hit++)
 	{
-		FrontOfPMTTestPoints(hitinfo[hit].pmtx,hitinfo[hit].pmty,hitinfo[hit].pmtz, rmax2, zmax, testpoints);
+		FrontOfPMTTestPoints(hitinfo[hit].pmtx,hitinfo[hit].pmty,hitinfo[hit].pmtz, rmax2, zmax, testPointsVector);
 	}
 
 	// Then compute a testpoint for all four-hit combinations within the ranges
 	// found and fill a temporary vector.
-	vector<vector<float>> fourhit_testpoints;
-	FourHitComboTestPoints(hitinfo,combos_upper_bounds,fourhit_testpoints);
+	vector<vector<float>> fourHitTestPointsVector;
+	FourHitComboTestPoints(hitinfo,combos_upper_bounds,fourHitTestPointsVector);
 
 	// TODO do we need this step?
 	// Average over points that are closer to each other than dmin_init
-	//ReduceTestPoints(fourhit_testpoints, (libConstants::dmin_init)**2 testpoints);	
+	//ReduceTestPoints(fourHitTestPointsVector, (libConstants::dmin_init)**2 testpoints);	
 	// Average over points that are closer to each other than dmin
-	ReduceTestPoints(fourhit_testpoints, libConstants::dmin2, testpoints);	
+	ReduceTestPoints(fourHitTestPointsVector, libConstants::sMinPointSeparation2, testPointsVector);	
 	
-	int npoints = testpoints.size();
+	int npoints = testPointsVector.size();
 
 	return(npoints);
 }
@@ -76,7 +76,7 @@ int TestPointCalc::CalculateTestPoints(vector<HitInfo>& hitinfo, float rmax2, fl
 // These are the principal functions called by the main CalculateVertices
 // function.
 
-void TestPointCalc::FrontOfPMTTestPoints(float pmtx, float pmty, float pmtz, float rmax2, float zmax, vector<vector<float>>& testpoints)
+void TestPointCalc::FrontOfPMTTestPoints(float pmtx, float pmty, float pmtz, float rmax2, float zmax, vector<vector<float>>& testPointsVector)
 {
 	float x, y, z;
 	//Calculates the first testpoints - these points in front of the hit PMTs
@@ -85,8 +85,8 @@ void TestPointCalc::FrontOfPMTTestPoints(float pmtx, float pmty, float pmtz, flo
 		// if it's one of the side PMTs
 		// TODO fractional distance from pmt is different for side PMTs in 
 		// BONSAI (0.9882 compared to 0.989)
-		x = pmtx*libConstants::pmtxy_fractional_distance;
-		y = pmty*libConstants::pmtxy_fractional_distance;
+		x = pmtx*libConstants::sFractionalXYDistance;
+		y = pmty*libConstants::sFractionalXYDistance;
 		z = pmtz;
 	}
 	else
@@ -95,16 +95,16 @@ void TestPointCalc::FrontOfPMTTestPoints(float pmtx, float pmty, float pmtz, flo
 		// point is (1-pmt_fractional_distance)*zmax in front of the PMT
 		x = pmtx;
 		y = pmty;
-		z = pmtz*libConstants::pmtz_fractional_distance;
+		z = pmtz*libConstants::sFractionalZDistance;
 	}
 	if (fabs(z)<zmax && (x*x+y*y)<rmax2)
 	{
-		testpoints.push_back({x,y,z});
+		testPointsVector.push_back({x,y,z});
 	}
 
 }
 
-void TestPointCalc::FourHitComboTestPoints(vector<HitInfo> hitinfo, vector<int> combos_upper_bounds, vector<vector<float>>& fourhit_testpoints)
+void TestPointCalc::FourHitComboTestPoints(vector<HitInfo> hitinfo, vector<int> combos_upper_bounds, vector<vector<float>>& fourHitTestPointsVector)
 {
 	int combo = 0;
 	// Loop over all 4-hit combinations.
@@ -122,7 +122,7 @@ void TestPointCalc::FourHitComboTestPoints(vector<HitInfo> hitinfo, vector<int> 
 					fourhitcombo = {hit1,hit2,hit3,hit4};
 					// Calculate the testpoint from the four-hit combination
 					// and add to a list of temporary testpoints.
-					FourHitVertex(hitinfo,fourhitcombo,combo,fourhit_testpoints);
+					FourHitVertex(hitinfo,fourhitcombo,combo,fourHitTestPointsVector);
 					combo++;
 
 				}
@@ -132,17 +132,17 @@ void TestPointCalc::FourHitComboTestPoints(vector<HitInfo> hitinfo, vector<int> 
 
 }
 
-void TestPointCalc::ReduceTestPoints(vector<vector<float>>& fourhit_testpoints, float dmin2, vector<vector<float>>& testpoints)
+void TestPointCalc::ReduceTestPoints(vector<vector<float>>& fourHitTestPointsVector, float sMinPointSeparation2, vector<vector<float>>& testPointsVector)
 {
 
 	// Loop over all fourhitcombo testpoints
-	for (int point1 = 0; point1<fourhit_testpoints.size(); point1++)
+	for (int point1 = 0; point1<fourHitTestPointsVector.size(); point1++)
 	{
 		// Update the testpoint with the average over all points
 		// close to this one.
-		FindClosePoint(fourhit_testpoints,point1,dmin2);
+		FindClosePoint(fourHitTestPointsVector,point1,sMinPointSeparation2);
 		// Add averaged point to the final testpoints vector.
-		testpoints.push_back(fourhit_testpoints[point1]);
+		testPointsVector.push_back(fourHitTestPointsVector[point1]);
 	}
 
 }
@@ -152,7 +152,7 @@ void TestPointCalc::ReduceTestPoints(vector<vector<float>>& fourhit_testpoints, 
 // These are the subsidiary functions called by the principal functions 
 // which are in turn called by the main CalculateVertices function.
 
-void TestPointCalc::FourHitVertex(vector<HitInfo> hitinfo, vector<int> fourhitcombo,int combo,vector<vector<float>>& fourhit_testpoints)
+void TestPointCalc::FourHitVertex(vector<HitInfo> hitinfo, vector<int> fourhitcombo,int combo,vector<vector<float>>& fourHitTestPointsVector)
 {
 	
 	// Calculate testpoints from four-hit combinations.
@@ -198,7 +198,7 @@ void TestPointCalc::FourHitVertex(vector<HitInfo> hitinfo, vector<int> fourhitco
 			dx = hitinfo[fourhitcombo[hit]].pmtx - hitinfo[fourhitcombo[firsthit]].pmtx;
 			dy = hitinfo[fourhitcombo[hit]].pmty - hitinfo[fourhitcombo[firsthit]].pmty;
 			dz = hitinfo[fourhitcombo[hit]].pmtz - hitinfo[fourhitcombo[firsthit]].pmtz;
-			dt = (hitinfo[fourhitcombo[hit]].time - hitinfo[fourhitcombo[firsthit]].time)*libConstants::cm_per_ns;
+			dt = (hitinfo[fourhitcombo[hit]].time - hitinfo[fourhitcombo[firsthit]].time)*libConstants::sCmPerNs;
 		}
 
 		// Add line vectors to the matrix
@@ -231,49 +231,49 @@ void TestPointCalc::FourHitVertex(vector<HitInfo> hitinfo, vector<int> fourhitco
 	{
 		vector <float> vertex(V.rows());
 		Map<MatrixXf>(vertex.data(), V.rows(),1) = V.col(vtx);
-		fourhit_testpoints[combo].push_back(vertex[0]+hitinfo[fourhitcombo[firsthit]].pmtx);
-		fourhit_testpoints[combo].push_back(vertex[1]+hitinfo[fourhitcombo[firsthit]].pmty);
-		fourhit_testpoints[combo].push_back(vertex[2]+hitinfo[fourhitcombo[firsthit]].pmtz);
-		fourhit_testpoints[combo].push_back(vertex[3]+hitinfo[fourhitcombo[firsthit]].time);
+		fourHitTestPointsVector[combo].push_back(vertex[0]+hitinfo[fourhitcombo[firsthit]].pmtx);
+		fourHitTestPointsVector[combo].push_back(vertex[1]+hitinfo[fourhitcombo[firsthit]].pmty);
+		fourHitTestPointsVector[combo].push_back(vertex[2]+hitinfo[fourhitcombo[firsthit]].pmtz);
+		fourHitTestPointsVector[combo].push_back(vertex[3]+hitinfo[fourhitcombo[firsthit]].time);
 	}
 
 }
 
 	
-void TestPointCalc::FindClosePoint(vector<vector<float>> fourhit_testpoints, int point1, float dmin2)
+void TestPointCalc::FindClosePoint(vector<vector<float>> fourHitTestPointsVector, int point1, float sMinPointSeparation2)
 {
-	float x1 = fourhit_testpoints[point1][0];
-	float y1 = fourhit_testpoints[point1][1];
-	float z1 = fourhit_testpoints[point1][2];
+	float x1 = fourHitTestPointsVector[point1][0];
+	float y1 = fourHitTestPointsVector[point1][1];
+	float z1 = fourHitTestPointsVector[point1][2];
 	float x2, y2, z2;
 	int nclosepoints = 0;
 
-	for (int point2 = 0; point2 < fourhit_testpoints.size(); point2++)
+	for (int point2 = 0; point2 < fourHitTestPointsVector.size(); point2++)
 	{
-		x2 = fourhit_testpoints[point2][0];
-		y2 = fourhit_testpoints[point2][1];
-		z2 = fourhit_testpoints[point2][2];
+		x2 = fourHitTestPointsVector[point2][0];
+		y2 = fourHitTestPointsVector[point2][1];
+		z2 = fourHitTestPointsVector[point2][2];
 		float dx = x1-x2;
 		float dy = y1-y2;
 		float dz = z1-z2;
 
-		if ((dx*dx+dy*dy+dz*dz) < dmin2)
+		if ((dx*dx+dy*dy+dz*dz) < sMinPointSeparation2)
 		{
 			// If a nearby point is found add to point 1 testpoint.
-			fourhit_testpoints[point1][0] += x2;
-			fourhit_testpoints[point1][1] += y2;
-			fourhit_testpoints[point1][2] += z2;
+			fourHitTestPointsVector[point1][0] += x2;
+			fourHitTestPointsVector[point1][1] += y2;
+			fourHitTestPointsVector[point1][2] += z2;
 			nclosepoints ++;
 			
 			// Erase the point2 testpoint and reduce point2 count.
-			fourhit_testpoints.erase(fourhit_testpoints.begin()+point2);
+			fourHitTestPointsVector.erase(fourHitTestPointsVector.begin()+point2);
 			point2--;
 		}
 	}
 
 	// Find the average testpoint
-	fourhit_testpoints[point1][0] /= nclosepoints;
-	fourhit_testpoints[point1][1] /= nclosepoints;
-	fourhit_testpoints[point1][2] /= nclosepoints;
+	fourHitTestPointsVector[point1][0] /= nclosepoints;
+	fourHitTestPointsVector[point1][1] /= nclosepoints;
+	fourHitTestPointsVector[point1][2] /= nclosepoints;
 
 }

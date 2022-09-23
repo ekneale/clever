@@ -19,7 +19,7 @@ TEST(GeometryTest,TestSetGeometry){
 
 	float r = sqrt(pow(500,2)+pow(500,2));
 	float z = 500;
-	float t = 2*sqrt(r*r+z*z)/libConstants::cm_per_ns;
+	float t = 2*sqrt(r*r+z*z)/libConstants::sCmPerNs;
 	r -= 50;
 	z -= 50;
 

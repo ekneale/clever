@@ -41,8 +41,8 @@ TEST(HitSelectTest,TestCheckCoincidence){
 	int nhits = 10;
 	
 	float dimension = 2*16; 
-	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
-	float dRmax = libConstants::dlim*dimension;
+	float dTmax = libConstants::sTimeLimitPMT*dimension/libConstants::sCmPerNs;
+	float dRmax = libConstants::sDistanceLimitPMT*dimension;
 	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
@@ -65,7 +65,7 @@ TEST(HitSelectTest,TestCheckCausal){
 	HitSelect checkcausal;
 	int nhits = 10;
 
-	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::sCmPerNs;
 	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
@@ -89,8 +89,8 @@ TEST(HitSelectTest,TestRemoveIsolatedHits){
 	HitSelect remove;
 	int nhits = 10;
 	float dimension = 2*16; 
-	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
-	float dRmax = libConstants::dlim*dimension;
+	float dTmax = libConstants::sTimeLimitPMT*dimension/libConstants::sCmPerNs;
+	float dRmax = libConstants::sDistanceLimitPMT*dimension;
 	vector<int>  is_rel(nhits);
 	vector<float> times = {1,1,1,1,1,1,1,0,1,1};
 	vector<float> charges = {1,1,1,1,1,1,1,1,1,1};
@@ -114,7 +114,7 @@ TEST(HitSelectTest,TestGetCausallyRelatedHits){
 	
 	HitSelect causal;
 	int nhits = 10;
-	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::sCmPerNs;
 	int nhits_causally_related;
 	vector<int> is_rel(nhits);
 	vector<int> nrelated 	= 	{1,5,6,0,7,8,9,8,3,3};
@@ -208,9 +208,9 @@ TEST(HitSelectTest,TestSelectHits){
 	HitSelect select;
 	int nhits = 10;
 	float dimension = 2*16; 
-	float dTmax = libConstants::tlim*dimension/libConstants::cm_per_ns;
-	float dRmax = libConstants::dlim*dimension;
-	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::cm_per_ns;
+	float dTmax = libConstants::sTimeLimitPMT*dimension/libConstants::sCmPerNs;
+	float dRmax = libConstants::sDistanceLimitPMT*dimension;
+	float traverseTmax = 2*sqrt(8*8+8*8)/libConstants::sCmPerNs;
 	vector<float> times	  = {1,1,1,1,1,1,1,1,1,1};
 	vector<float> charges 	= 	{1,2,5,4,1,9,3,8,6,7};
 	vector<float> pmtx 	= 	{1,1,1,1,1,1,1,1,1,1};

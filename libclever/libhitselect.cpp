@@ -222,7 +222,7 @@ int HitSelect::GetCausallyRelatedHits(int nhits_isolated_removed,vector<HitInfo>
 	
 
 	// So now we have a vector of class objects to show which hits are related
-	// This needs to be sorted by the number of related hits in descending order.
+	// This needs to be sorted by the number of related hits in descending order
 	
 	// Sort the hit indices by the number of related hits (nrelated[i]) 
 	// in descending order. If the number of related hits are equal, 
@@ -460,7 +460,7 @@ int HitSelect::FindHitClusters(int nhits_causally_related, vector<HitInfo>& hiti
 	// the best cluster?????
 	// Would it be worth keeping all of the hits which appear in the large 
 	// clusters and then using hits where these don't overlap to create 
-	// additional stairting points?????
+	// additional starting points?????
 	for (int i=0; i<size(hitinfo); i++)
 	{
 		hitinfo[i].is_selected = all_clusters[nclusters-1][i];
@@ -616,7 +616,7 @@ int HitSelect::CheckCausal(int i,int j, vector<HitInfo> hitinfo, float traverseT
 	float deltaD2 = DeltaDistance2(i,j,hitinfo);
 	// First check that the time and distance between PMTs do not 
 	// exceed the detector constraints
-	if (deltaT > libConstants::tcoinc)
+	if (deltaT > libConstants::sTimeCoincidencePMT)
 	{
 		return (0);
 	}
@@ -626,7 +626,7 @@ int HitSelect::CheckCausal(int i,int j, vector<HitInfo> hitinfo, float traverseT
 		return (0);
 	}
 
-	return(deltaT*deltaT<=deltaD2/libConstants::cm_per_ns);
+	return(deltaT*deltaT<=deltaD2/libConstants::sCmPerNs);
 }
 
 int HitSelect::FindClusterCandidate(int nhits_causally_related, int seed1, int seed2, vector <HitInfo>& hitinfo, vector<int>& cluster)

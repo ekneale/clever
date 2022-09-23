@@ -37,13 +37,13 @@ class Geometry
 		// of the detector dimensions and accessible outside the class.
 
 		// maximum radius of inner volume
-		// libConstants::dPMT from the PMTs
+		// libConstants::sDPMT from the PMTs
 		inline float search_radius(void){
 			return(rmax);
 		}
 
 		// maximum height of inner volume
-		// libConstants::dPMT from the PMTs
+		// libConstants::sDPMT from the PMTs
 		inline float search_height(void){
 			return(zmax);
 		}

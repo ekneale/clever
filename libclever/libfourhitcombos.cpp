@@ -59,15 +59,15 @@ int FourHitCombos::FindRanges(vector<HitInfo> hitinfo, int nselected, int& ncomb
 	// between time and accuracy.
 	// TODO what is the relevance of the expression used to find the optimal
 	// number of combinations????????????????
-	int optimal_n3hitcombos = libConstants::max_combo_hits*(libConstants::max_combo_hits-1)*(libConstants::max_combo_hits-2)/6.;
-	float ratio = (libConstants::max_combo_hits-3)/(nselected-3);
+	int optimal_n3hitcombos = libConstants::sMaximumHitsForCombos*(libConstants::sMaximumHitsForCombos-1)*(libConstants::sMaximumHitsForCombos-2)/6.;
+	float ratio = (libConstants::sMaximumHitsForCombos-3)/(nselected-3);
 	float optimal_ncombos = (0.5+(nselected-3)*(1+ratio*(0.25*optimal_n3hitcombos-1)));
 
 
 	// If nselected < 478 (or as defined in libConstants, ncombo calculated depending
 	// on what it is divisible by.
 	// else max ncombos = 2147483647; max for (nselected = 477) is 2130031575)
-	if (nselected <= libConstants::max_nselected)
+	if (nselected <= libConstants::sMaximumSelectedHits)
 	{
 		int nselected1 = nselected-1; 
 	  	int nselected2 = nselected-2;
@@ -99,7 +99,7 @@ int FourHitCombos::FindRanges(vector<HitInfo> hitinfo, int nselected, int& ncomb
     }
   	else
 	{
-		ncombos=libConstants::max_ncombinations; 
+		ncombos=libConstants::sMaximumCombinations; 
 	}
 
 	// Now that we have a number of combinations max_ncombos or less,
@@ -239,7 +239,7 @@ int FourHitCombos::FindNewCombinations(vector<HitInfo> hitinfo, int nselected, f
 	int ncombos = 0;
 
 	// Loop over the hits. Stop if ncombos reaches the maximum.
-	while (current != upper && ncombos < libConstants::max_ncombinations)
+	while (current != upper && ncombos < libConstants::sMaximumCombinations)
 	{
 		time_current = hitinfo[distance(hitinfo.begin(),current)].time;
 		
@@ -263,9 +263,9 @@ int FourHitCombos::FindNewCombinations(vector<HitInfo> hitinfo, int nselected, f
 		ncombos += n3hitcombos;
 
 		// If ncombos exceeds the maximum allowed, reduce ncombos to the max.
-		if (ncombos > libConstants::max_ncombinations) 
+		if (ncombos > libConstants::sMaximumCombinations) 
 		{
-			ncombos = libConstants::max_ncombinations;
+			ncombos = libConstants::sMaximumCombinations;
 		}
 
 
@@ -324,7 +324,7 @@ int FourHitCombos::SetNewInterval(vector<HitInfo> hitinfo, int nselected, float 
 
 		// Then calculate the number of combinations if
 		// max_ncombinations has not already been exceeded.
-		if (ncombos<libConstants::max_ncombinations)
+		if (ncombos<libConstants::sMaximumCombinations)
 		{
 			// Calculate the number of 3-hit combinations possible with the 
 			// current hit and add it to the total number of 4-hit combinations.
@@ -332,9 +332,9 @@ int FourHitCombos::SetNewInterval(vector<HitInfo> hitinfo, int nselected, float 
 			ncombos += n3hitcombos;
 
 			// If ncombos exceeds the max allowed, reduce ncombos to the max.
-			if (ncombos > libConstants::max_ncombinations) 
+			if (ncombos > libConstants::sMaximumCombinations) 
 			{
-				ncombos = libConstants::max_ncombinations;
+				ncombos = libConstants::sMaximumCombinations;
 			}
 		}
 
