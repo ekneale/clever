@@ -1,4 +1,4 @@
-######### To build #############
+##To build
 
 $ cmake -B build
 
@@ -7,7 +7,7 @@ $ cmake --build build
 // To clean first
 $ cmake --build build --target clean
 
-######### Structure of the code #########
+##Structure of the code
 
 The class libraries are stored in the libclever directory, with the naming
 convention lib[classname].cpp. Headers are stored in the same directory with
@@ -16,7 +16,7 @@ the same naming convention.
 The main executable and peripherals are stored in the clever directory.
 
 
-######### Unit tests ###################
+##Unit tests
 
 Unit tests for each class have been built in to the code and have the naming 
 convention lib[classname].test.cpp.
@@ -24,7 +24,7 @@ convention lib[classname].test.cpp.
 To run all unit tests after build do:
 $ ./build/cleverTests
 
-######### C++ Style Guidelines ##########
+##C++ Style Guidelines
 
 The following style protocol has been used and should be followed as closesly as
 possible for changes/additions to the code.
@@ -63,3 +63,9 @@ Suffixes for type:
 List, Vector, etc.
 
 E.g. itemList[iItem] = pItem.
+
+
+
+##LICENCE
+
+Clever is released under the OSI-approved [3-Clause BSD Licence](https://opensource.org/licenses/BSD-3-Clause).
